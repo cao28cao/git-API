@@ -18,7 +18,8 @@ export type User = {
 };
 
 export type Repo = {
-  id: string;
+  id: number;
+  created_at: number;
   name: string;
   html_url: string;
   avatar_url: string;
@@ -28,9 +29,11 @@ export type Repo = {
   owner: {
     avatar_url: string;
   };
+
 };
 
 const sorting = [
+  { value: "default", label: "Default" },
   { value: "stars", label: "Stars" },
   { value: "forks", label: "Forks" },
   { value: "original", label: "Original" },
@@ -41,7 +44,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [, setResults] = useState<User[]>([]);
   const [repos, setRepos] = useState<Repo[]>([]);
-  const [sort, setSort] = useState("original");
+  const [sort, setSort] = useState("default");
 
   const searchUsers = async (username: string) => {
     console.log(`Searching for ${username}`);
@@ -79,22 +82,21 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (sort === "stars") {
-      setRepos(
-        [...repos].sort((a, b) => b.stargazers_count - a.stargazers_count)
-      );
-    } else if (sort === "forks") {
-      setRepos([...repos].sort((a, b) => b.forks_count - a.forks_count));
-    } else if (sort === "original") {
-      setRepos(
-        [...repos].sort(
-          (a, b) =>
-            b.stargazers_count +
-            b.forks_count -
-            a.stargazers_count -
-            a.forks_count
-        )
-      );
+    switch (sort) {
+      case "stars":
+        setRepos((repos) => [...repos].sort((a, b) => b.stargazers_count - a.stargazers_count));
+        break;
+      case "forks":
+        setRepos((repos) => [...repos].sort((a, b) => b.forks_count - a.forks_count));
+        break;
+      case "original":
+        setRepos((repos) => [...repos].sort((a, b) => b.stargazers_count + b.forks_count - (a.stargazers_count + a.forks_count)));
+        break;
+      case "default":
+        setRepos((repos) => [...repos].sort((a, b) => b.id - a.id));
+        break;
+      default:
+        break;
     }
   }, [sort]);
 
