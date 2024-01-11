@@ -4,6 +4,7 @@ import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaGithub } from "react-icons/fa";
+import { ArrowUp } from "lucide-react";
 
 export type User = {
   id: string;
@@ -41,6 +42,7 @@ const App = () => {
   const [, setResults] = useState<User[]>([]);
   const [repos, setRepos] = useState<Repo[]>([]);
   const [sort, setSort] = useState("default");
+  const [showTopButton, setShowTopButton] = useState(false);
 
   const searchUsers = async (username: string) => {
     console.log(`Searching for ${username}`);
@@ -108,6 +110,26 @@ const App = () => {
     }
   }, [sort]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setShowTopButton(true);
+      } else {
+        setShowTopButton(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleClickToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <>
       <div className="header">
@@ -170,6 +192,15 @@ const App = () => {
             </div>
           ))}
         </div>
+
+        {showTopButton && (
+          <Button
+            onClick={handleClickToTop}
+            className="click-to-top-button"
+          >
+            <ArrowUp />
+          </Button>
+        )}
       </div>
     </>
   );
