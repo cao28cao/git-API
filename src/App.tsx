@@ -22,6 +22,7 @@ export type Repo = {
   language: string;
   forks_count: number;
   stargazers_count: number;
+  watchers_count: number;
   owner: {
     avatar_url: string;
   };
@@ -93,8 +94,9 @@ const App = () => {
           [...repos].sort(
             (a, b) =>
               b.stargazers_count +
+              b.watchers_count +
               b.forks_count -
-              (a.stargazers_count + a.forks_count)
+              (a.stargazers_count + a.watchers_count + a.forks_count)
           )
         );
         break;
@@ -160,7 +162,6 @@ const App = () => {
                   <CardTitle>{repo.name}</CardTitle>
                 </CardHeader>
                 <CardContent className="card-content">
-                  {/* <p>{repo.</p> */}
                   <p>{repo.language ? repo.language : "Others"} </p>
                   <p>Fork Count: {repo.forks_count}</p>
                   <p>Star Count: {repo.stargazers_count}</p>
