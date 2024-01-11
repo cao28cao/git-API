@@ -37,7 +37,7 @@ const sorting = [
 const App = () => {
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<User[]>([]);
+  const [ ,setResults] = useState<User[]>([]);
   const [repos, setRepos] = useState<Repo[]>([]);
   const [sort, setSort] = useState("original");
 
@@ -49,7 +49,7 @@ const App = () => {
       const response = await axios.get(
         `https://api.github.com/search/users?q=${username}`
       );
-      console.log(response.data.items);
+      // console.log(response.data.items);
       setResults(response.data.items);
       repoFromUser(response.data.items[0]);
     } catch (error) {
@@ -62,7 +62,7 @@ const App = () => {
     setIsLoading(true);
     try {
       const response = await axios.get(user.repos_url);
-      console.log(response.data);
+      // console.log(response.data);
       setRepos(response.data);
     } catch (error) {
       console.error(`Error fetching`, error);
