@@ -1,14 +1,11 @@
-import { useEffect, useState } from "react";
-
+import { useState, useEffect } from "react";
 import axios from "axios";
-
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -81,21 +78,12 @@ const App = () => {
 
   useEffect(() => {
     if (sort === "stars") {
-      setRepos(repos.sort((a, b) => b.stargazers_count - a.stargazers_count));
+      setRepos([...repos].sort((a, b) => b.stargazers_count - a.stargazers_count));
+    } else if (sort === "forks") {
+      setRepos([...repos].sort((a, b) => b.forks_count - a.forks_count));
     }
-    if (sort === "forks") {
-      setRepos(repos.sort((a, b) => b.forks_count - a.forks_count));
-    }
-    if (sort === "original") {
-      setRepos(
-        repos.sort(
-          (a, b) =>
-            b.stargazers_count +
-            b.forks_count -
-            a.stargazers_count -
-            a.forks_count
-        )
-      );
+    else if (sort === "original") {
+      setRepos([...repos].sort((a, b) => b.stargazers_count + b.forks_count - a.stargazers_count - a.forks_count));
     }
   }, [sort]);
 
@@ -122,7 +110,7 @@ const App = () => {
         <Button
           key={sortOption.value}
           onClick={() => setSort(sortOption.value)}
-          className="mr-2"
+          className={`mr-2 ${sort === sortOption.value ? "text-blue-500" : ""}`}
         >
           {sortOption.label}
         </Button>
