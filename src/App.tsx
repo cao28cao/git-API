@@ -26,6 +26,9 @@ export type Repo = {
   language: string;
   forks_count: number;
   stargazers_count: number;
+  owner: {
+    avatar_url: string;
+  };
 };
 
 const sorting = [
@@ -37,7 +40,7 @@ const sorting = [
 const App = () => {
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [ ,setResults] = useState<User[]>([]);
+  const [, setResults] = useState<User[]>([]);
   const [repos, setRepos] = useState<Repo[]>([]);
   const [sort, setSort] = useState("original");
 
@@ -49,7 +52,7 @@ const App = () => {
       const response = await axios.get(
         `https://api.github.com/search/users?q=${username}`
       );
-      // console.log(response.data.items);
+      console.log(response.data.items);
       setResults(response.data.items);
       repoFromUser(response.data.items[0]);
     } catch (error) {
@@ -62,7 +65,7 @@ const App = () => {
     setIsLoading(true);
     try {
       const response = await axios.get(user.repos_url);
-      // console.log(response.data);
+      console.log(response.data);
       setRepos(response.data);
     } catch (error) {
       console.error(`Error fetching`, error);
@@ -78,17 +81,26 @@ const App = () => {
 
   useEffect(() => {
     if (sort === "stars") {
-      setRepos([...repos].sort((a, b) => b.stargazers_count - a.stargazers_count));
+      setRepos(
+        [...repos].sort((a, b) => b.stargazers_count - a.stargazers_count)
+      );
     } else if (sort === "forks") {
       setRepos([...repos].sort((a, b) => b.forks_count - a.forks_count));
-    }
-    else if (sort === "original") {
-      setRepos([...repos].sort((a, b) => b.stargazers_count + b.forks_count - a.stargazers_count - a.forks_count));
+    } else if (sort === "original") {
+      setRepos(
+        [...repos].sort(
+          (a, b) =>
+            b.stargazers_count +
+            b.forks_count -
+            a.stargazers_count -
+            a.forks_count
+        )
+      );
     }
   }, [sort]);
 
   return (
-    <div className="mt-8 px-4 py-4">
+    <div className="mt-8 px-4 py-4 search-user">
       <div>
         <Input
           type="text"
@@ -96,7 +108,7 @@ const App = () => {
           onChange={(e) => setUsername(e.target.value)}
           onKeyUp={handleKeyPress}
           placeholder="Search for a user's repos"
-          className="mb-2"
+          className="input-search"
         />
         <Button
           onClick={() => searchUsers(username)}
@@ -110,21 +122,33 @@ const App = () => {
         <Button
           key={sortOption.value}
           onClick={() => setSort(sortOption.value)}
-          className={`mr-2 ${sort === sortOption.value ? "text-blue-500" : ""}`}
+          variant={sort === sortOption.value ? "default" : "outline"}
+          className={`button-sort ${
+            sort === sortOption.value ? "button-active" : ""
+          }`}
+          disabled={isLoading}
         >
           {sortOption.label}
         </Button>
       ))}
 
-      <div>
-        {repos.map((repo) => (
-          <div key={repo.id} className="grid grid-cols-2 mt-4">
+      <div className="repo-list">
+        {repos.map((repo, index) => (
+          <div key={repo.id} className="repo-card">
             <Card>
+              <div>{index + 1}</div>
+
+              <img
+                src={repo.owner.avatar_url}
+                alt="alt"
+                width={48}
+                height={48}
+              />
               <CardHeader>
                 <CardTitle>{repo.name}</CardTitle>
-                <CardDescription>{repo.html_url}</CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-row gap-4">
+              <CardContent className="card-content">
+                {/* <p>{repo.</p> */}
                 <p>{repo.language ? repo.language : "Others"} </p>
                 <p>Fork Count: {repo.forks_count}</p>
                 <p>Star Count: {repo.stargazers_count}</p>
