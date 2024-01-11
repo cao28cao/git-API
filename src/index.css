@@ -75,8 +75,20 @@
   }
 }
 
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.github {
+  font-size: 2rem;
+}
+
 .search-user {
-  padding-top: 2rem;
+  padding-top: 4rem;
   padding-left: 4rem;
   padding-right: 4rem;
   padding-bottom: 1rem;
